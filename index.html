@@ -316,31 +316,36 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
             z-index: 1000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .modal-content {
             position: relative;
             background-color: #fff;
-            margin: 50px auto;
+            margin: 20px auto;
             max-width: 800px;
             width: 90%;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
+            max-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
         }
 
         .close-button {
             position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 28px;
+            right: 15px;
+            top: 15px;
+            font-size: 24px;
             font-weight: bold;
             color: white;
             cursor: pointer;
             z-index: 10;
             background: rgba(0, 0, 0, 0.5);
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -350,7 +355,7 @@
         .modal-image-container {
             position: relative;
             width: 100%;
-            height: 300px;
+            height: 250px;
         }
 
         .modal-image-container img {
@@ -361,34 +366,36 @@
 
         .modal-date-badge {
             position: absolute;
-            left: 20px;
-            bottom: 20px;
+            left: 15px;
+            bottom: 15px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 12px 20px;
+            padding: 10px 16px;
             border-radius: 8px;
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
         .modal-title {
-            font-size: 28px;
-            margin: 15px 0;
+            font-size: 24px;
+            margin: 12px 0;
         }
 
         .modal-detail {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            font-size: 16px;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 15px;
             color: #666;
         }
 
         .modal-description {
-            margin: 30px 0;
+            margin: 20px 0;
         }
 
         .modal-description h3 {
@@ -403,12 +410,12 @@
 
         .modal-actions {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-top: 20px;
         }
 
         .register-button, .share-button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
@@ -419,6 +426,7 @@
         .register-button {
             background-color: #6366f1;
             color: white;
+            flex-grow: 1;
         }
 
         .share-button {
@@ -454,6 +462,34 @@
             .header-top {
                 flex-direction: column;
                 gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px auto;
+                max-height: calc(100vh - 20px);
+            }
+            
+            .modal-image-container {
+                height: 200px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+            
+            .modal-detail {
+                font-size: 14px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
             }
         }
     </style>
