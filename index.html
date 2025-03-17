@@ -491,6 +491,95 @@
             .modal-actions {
                 flex-direction: column;
             }
+            
+            /* Calendar mobile improvements */
+            .calendar-view {
+                font-size: 12px;
+                margin: 0 -10px; /* Negative margin to use more screen space */
+                border-radius: 8px;
+            }
+            
+            .calendar-nav {
+                padding: 8px 10px;
+            }
+            
+            .calendar-nav h2 {
+                font-size: 1.2rem;
+            }
+            
+            .calendar-nav button {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            
+            .calendar-header-cell {
+                padding: 6px 0;
+                font-size: 11px;
+            }
+            
+            .calendar-cell {
+                min-height: 60px;
+                padding: 4px 2px 2px 2px;
+            }
+            
+            .calendar-date {
+                top: 4px;
+                right: 4px;
+                height: 18px;
+                width: 18px;
+                font-size: 10px;
+            }
+            
+            .calendar-event-container {
+                margin-top: 22px;
+            }
+            
+            .calendar-event {
+                margin: 1px 0;
+                padding: 2px 4px;
+                font-size: 10px;
+                line-height: 12px;
+                max-height: 36px; /* Show max 3 lines worth of events */
+            }
+            
+            /* Hide all but the first 2 events per day on mobile */
+            .calendar-event:nth-child(n+3) {
+                display: none;
+            }
+            
+            /* Show a +more indicator when events are hidden */
+            .calendar-cell.has-more-events::after {
+                content: "+ more";
+                display: block;
+                font-size: 9px;
+                text-align: center;
+                color: #5f6368;
+                margin-top: 1px;
+            }
+            
+            /* Make filter dropdown more touch-friendly */
+            .filter-dropdown {
+                padding: 10px;
+                font-size: 14px;
+                min-width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Tiny screens */
+        @media (max-width: 360px) {
+            .calendar-cell {
+                min-height: 50px;
+            }
+            
+            .calendar-nav button {
+                font-size: 11px;
+                padding: 5px;
+            }
+            
+            .calendar-event:nth-child(n+2) {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -817,7 +906,17 @@
                 const dateKey = currentDay.toISOString().split('T')[0];
                 if (eventsByDate[dateKey] && eventsByDate[dateKey].length > 0) {
                     // Sort events (all-day events first, then by start time)
-                    eventsByDate[dateKey].forEach(event => {
+                    const dayEvents = eventsByDate[dateKey];
+                    
+                    // Check if we need to add "more" indicator for mobile
+                    const isMobile = window.innerWidth <= 576;
+                    const hasManyEvents = dayEvents.length > (isMobile ? (window.innerWidth <= 360 ? 1 : 2) : 99);
+                    
+                    if (hasManyEvents && isMobile) {
+                        cell.classList.add('has-more-events');
+                    }
+                    
+                    dayEvents.forEach((event, index) => {
                         const eventEl = document.createElement('div');
                         
                         // Apply classes and styles
@@ -826,18 +925,19 @@
                             eventEl.classList.add(event.multiDayClass);
                         }
                         
-                        // Create shortened event title
+                        // Create shortened event title - shorter on mobile
                         let title = event.title;
-                        if (title.length > 20) {
-                            title = title.substring(0, 17) + '...';
+                        const maxLength = isMobile ? 12 : 20;
+                        if (title.length > maxLength) {
+                            title = title.substring(0, maxLength - 3) + '...';
                         }
                         
                         // Add indicator for multi-day events
                         if (event.isMultiDay) {
                             if (event.isFirstDay) {
-                                title = `${title} (Mula)`;
+                                title = `${title} (M)`;
                             } else if (event.isLastDay) {
-                                title = `${title} (Tamat)`;
+                                title = `${title} (T)`;
                             }
                         }
                         
@@ -915,6 +1015,21 @@
         // Update calendar navigation buttons text to Malay
         document.getElementById('prevMonth').textContent = '< Bulan Sebelum';
         document.getElementById('nextMonth').textContent = 'Bulan Selepas >';
+        
+        // Add window resize handler to refresh calendar if view changes between mobile/desktop
+        let prevWidth = window.innerWidth;
+        window.addEventListener('resize', function() {
+            // Only re-render if crossing mobile breakpoint
+            if ((prevWidth <= 576 && window.innerWidth > 576) || 
+                (prevWidth > 576 && window.innerWidth <= 576) ||
+                (prevWidth <= 360 && window.innerWidth > 360) ||
+                (prevWidth > 360 && window.innerWidth <= 360)) {
+                if (currentView === 'calendar') {
+                    renderCalendarView();
+                }
+            }
+            prevWidth = window.innerWidth;
+        });
     </script>
 </body>
 </html>
